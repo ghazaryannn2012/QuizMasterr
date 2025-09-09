@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="hy">
+<head>
+<meta charset="utf-8" />  
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Ուսուցողական Վիկտորինա — 40 հարց (3 լեզու)</title>
+<style>
+  :root{--primary:#0077b6;--accent:#00acee;--card:#fff;--muted:#666}
+  *{box-sizing:border-box}
+  html,body{height:100%;margin:0;font-family:Inter, system-ui, -apple-system,"Segoe UI",Roboto,"Noto Sans",Arial}
+  body{background:linear-gradient(180deg,#e8f7ff,#d4f0ff);display:flex;align-items:center;justify-content:center;padding:20px}
+  .app{width:100%;max-width:920px;background:var(--card);border-radius:14px;box-shadow:0 14px 40px rgba(20,40,60,0.08);overflow:hidden;position:relative}
+  header{background:var(--primary);color:white;padding:14px 18px;display:flex;align-items:center;justify-content:space-between}
+  header h1{font-size:18px;margin:0}
+  document.querySelector.textContent = gameName;
+
+  #settingsBtn{background:none;border:none;color:white;font-size:20px;cursor:pointer}
+  .main{display:flex;gap:18px;padding:18px;align-items:flex-start}
+  .left{flex:1;min-width:360px}
+  .right{width:300px}
+  .card{background:linear-gradient(180deg,#ffffff,#f7fdff);border-radius:12px;padding:14px;box-shadow:0 6px 18px rgba(12,40,80,0.04)}
+  .question-box{min-height:170px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+  #questionText{font-size:18px;margin-bottom:12px}
+  .choices{width:100%}
+  .choice-btn{display:block;width:100%;padding:12px 10px;margin:8px 0;border-radius:10px;border:1px solid #d6eef7;background:#eaf9ff;cursor:pointer;font-size:16px;text-align:left}
+  .choice-btn:hover{background:#ddf3fb}
+  .meta{display:flex;justify-content:space-between;align-items:center;margin-top:8px}
+  .meta .small{color:var(--muted);font-size:13px}
+  #startBtn{margin-top:10px;padding:14px 26px;border-radius:12px;border:none;background:var(--primary);color:white;font-size:18px;cursor:pointer}
+  #startBtn:hover{background:#0a6fa0}
+  .score{font-size:20px;font-weight:700;color:#073b4c}
+  .level{font-size:14px;color:var(--muted)}
+  .share-btn{margin-top:10px;padding:10px 14px;border-radius:10px;border:none;background:var(--accent);color:white;cursor:pointer}
+  .settings-panel{position:absolute;top:56px;right:18px;width:220px;background:#fff;border-radius:10px;padding:12px;border:1px solid #eee;box-shadow:0 8px 22px rgba(0,0,0,0.08);display:none;flex-direction:column;gap:8px}
+  .lang-btn{width:100%;padding:8px;border-radius:8px;border:1px solid var(--primary);background:#fff;cursor:pointer}
+  .lang-btn.active{background:var(--primary);color:white}
+  .hidden{display:none}
+  footer{padding:12px 18px;background:#f7fdff;border-top:1px solid #eef8ff;font-size:13px;color:var(--muted);text-align:center}
+  @media(max-width:920px){.main{flex-direction:column}.right{width:100%}.settings-panel{right:12px}}
+</style>
+</head>
+<body>
+  <div class="app" role="application" aria-label="Educational quiz game">
+    <header>
+      <h1>Ուսուցողական Վիկտորինա</h1>
+      <div>
+        <button id="settingsBtn" aria-haspopup="true" aria-expanded="false">⚙️</button>
+      </div>
+    </header>
+
+    <div class="settings-panel" id="settingsPanel" aria-hidden="true">
+      <button id="homeBtn" class="lang-btn">Home</button>
+      <div style="font-weight:700;margin-top:6px;margin-bottom:6px;color:#333">Լեզու / Language</div>
+      <button class="lang-btn" data-lang="hy">Հայերեն</button>
+      <button class="lang-btn" data-lang="en">English</button>
+      <button class="lang-btn" data-lang="ru">Русский</button>
+    </div>
+
+    <div class="main">
+      <div class="left">
+        <div class="card question-card">
+          <div class="question-box" id="questionBox">
+            <div id="questionText" aria-live="polite"></div>
+            <div class="choices" id="choicesContainer" role="list"></div>
+          </div>
+          <div class="meta" style="margin-top:12px">
+            <div class="level" id="levelDisplay"></div>
+            <div class="score" id="scoreDisplay"></div>
+          </div>
+
+          <div style="display:flex;gap:12px;justify-content:center">
+            <button id="startBtn">Start Game</button>
+            <button id="shareBtn" class="share-btn hidden">Share</button>
+          </div>
+          <div id="message" style="text-align:center;margin-top:10px;color:#0b3b4a;font-weight:600"></div>
+        </div>
+      </div>
+
+      <div class="right">
+        <div class="card">
+          <div style="font-weight:700;margin-bottom:8px">Ինչ է սովորեցնում խաղը</div>
+          <ul style="margin:0;padding-left:18px;color:#333">
+            <li>Լոգիկա և արագ մտածողություն</li>
+            <li>Գիտելիքների խառը թեմաներ (մաթ. գիտ., պատմություն, աշխարհագրություն)</li>
+            <li>Լեզվի աջակցություն՝ հայ/ենգ/ռուս</li>
+            <li>Պրոգրես եւ արդյունքների պահպանում (localStorage)</li>
+          </ul>
+          <div style="margin-top:12px;color:var(--muted)">Share կոճակը ակտիվանում է level ավարտելուց հետո</div>
+        </div>
+      </div>
+    </div>
+
+    <footer>40 հարց — խառը թեմաներ։ Պահպանել և շարունակել հնարավոր է հաջորդ մուտքերում։</footer>
+  </div>
+
+<script>
+/* Multilang text */
+const texts = {
+  hy: {
+    correct: 'Ճիշտ է ✅',
+    wrong: 'Սխալ ❌',
+    score: 'Միավոր',
+    level: 'Level',
+    congratsLevel: 'Շնորհավոր — Level ավարտվեց!',
+    congratsDone: 'Շնորհավոր — խաղը ավարտվեց!',
+    shareText: 'Ես ավարտեցի Level {L}՝ {S} միավորով ուսուցողական վիկտորինայում!'
+  },
+  en: {
+    correct: 'Correct ✅',
+    wrong: 'Wrong ❌',
+    score: 'Score',
+    level: 'Level',
+    congratsLevel: 'Congrats — level completed!',
+    congratsDone: 'Congrats — game finished!',
+    shareText: 'I completed Level {L} with {S} points in the educational quiz!'
+  },
+  ru: {
+    correct: 'Правильно ✅',
+    wrong: 'Неправильно ❌',
+    score: 'Score',
+    level: 'Уровень',
+    congratsLevel: 'Поздравляем — уровень пройден!',
+    congratsDone: 'Поздравляем — игра окончена!',
+    shareText: 'Я прошёл уровень {L} с {S} очками в обучающей викторине!'
+  }
+};
+
+/* QUESTIONS: 40 questions = 8 levels × 5 questions */
+/* Varied topics: math, science, history, geography, logic, IT, everyday */
+const levels = [
+  // Level 1 — easy/mixed
+  { questions: [
+    { text:{hy:"Ի՞նչ է 2 + 2 =", en:"What is 2 + 2?", ru:"Сколько будет 2 + 2?"}, choices:[{hy:"3",en:"3",ru:"3"},{hy:"4",en:"4",ru:"4"},{hy:"5",en:"5",ru:"5"},{hy:"6",en:"6",ru:"6"}], answer:1 },
+    { text:{hy:"Ո՞րն է աշխարհի ամենամեծ օվկիանոսը։", en:"Which is the largest ocean?", ru:"Какой самый большой океан?"}, choices:[{hy:"Ատլանտյան",en:"Atlantic",ru:"Атлантический"},{hy:"Ինդիանյան",en:"Indian",ru:"Индийский"},{hy:"Խաղաղ",en:"Pacific",ru:"Тихий"},{hy:"Հյուս. Սառույցային",en:"Arctic",ru:"Северный Ледовитый"}], answer:2 },
+    { text:{hy:"Ո՞ր կենդանին է ասում «մյաու»։", en:"Which animal says 'meow'?", ru:"Какое животное говорит 'мяу'?"}, choices:[{hy:"Շուն",en:"Dog",ru:"Собака"},{hy:"Կատու",en:"Cat",ru:"Кошка"},{hy:"Հիսուն",en:"Mouse",ru:"Мышь"},{hy:"Թռչուն",en:"Bird",ru:"Птица"}], answer:1 },
+    { text:{hy:"HTML-ում տեգը որը նկարագրում է վերնագիրը։", en:"In HTML which tag is for the page title shown in browser tab?", ru:"В HTML какой тег задаёт заголовок вкладки браузера?"}, choices:[{hy:"<body>",en:"<body>",ru:"<body>"},{hy:"<title>",en:"<title>",ru:"<title>"},{hy:"<head>",en:"<head>",ru:"<head>"},{hy:"<h1>",en:"<h1>",ru:"<h1>"}], answer:1 },
+    { text:{hy:"Տրամաբանական: եթե բոլոր A-ները B են և բոլոր B-ները C են, արդյոք A-ները C են?", en:"Logic: If all A are B, and all B are C, are all A also C?", ru:"Логика: Если все A — это B, и все B — это C, будут ли все A — это C?"}, choices:[{hy:"Այո",en:"Yes",ru:"Да"},{hy:"Ոչ",en:"No",ru:"Нет"},{hy:"Ոչինչ հայտնի չէ",en:"Undetermined",ru:"Неопределено"},{hy:"Պետք է փորձել",en:"Need to check",ru:"Нужно проверить"}], answer:0 }
+  ]},
+
+  // Level 2 — mixed
+  { questions: [
+    { text:{hy:"100 ÷ 25 =", en:"100 ÷ 25 =", ru:"100 ÷ 25 ="}, choices:[{hy:"2",en:"2",ru:"2"},{hy:"3",en:"3",ru:"3"},{hy:"4",en:"4",ru:"4"},{hy:"5",en:"5",ru:"5"}], answer:3 },
+    { text:{hy:"Ո՞ր երկիրն է հայտնի ինչպես 'Մեծ Ծովափ' (Great Barrier Reef) գտնվող երկիրը", en:"Which country has the Great Barrier Reef?", ru:"В какой стране находится Большой барьерный риф?"}, choices:[{hy:"ԱՄՆ",en:"USA",ru:"США"},{hy:"Ավստրալիա",en:"Australia",ru:"Австралия"},{hy:"Ինդոնեզիա",en:"Indonesia",ru:"Индонезия"},{hy:"Կանադա",en:"Canada",ru:"Канада"}], answer:1 },
+    { text:{hy:"Մոլեկուլային բանաձև՝ ջուր", en:"Chemical formula of water", ru:"Формула воды"}, choices:[{hy:"H2O",en:"H2O",ru:"H2O"},{hy:"CO2",en:"CO2",ru:"CO2"},{hy:"O2",en:"O2",ru:"O2"},{hy:"NaCl",en:"NaCl",ru:"NaCl"}], answer:0 },
+    { text:{hy:"Ո՞վ հայտնաբերեց Ամերիկան 1492-ին", en:"Who reached America in 1492?", ru:"Кто достиг Америки в 1492 году?"}, choices:[{hy:"Վասկո դե Գաման",en:"Vasco da Gama",ru:"Васко да Гама"},{hy:"Քրիստոֆոր Կոլումբ",en:"Christopher Columbus",ru:"Христофор Колумб"},{hy:"Մագելան",en:"Magellan",ru:"Магеллан"},{hy:"Էրիկոս Ռեդ",en:"Leif Erikson",ru:"Лейф Эриксон"}], answer:1 },
+    { text:{hy:"Գրեթե բոլոր համակարգչային կայքեր ցույց են տալիս տեղեկատվություն՝ ինչ լեզվով՝ JavaScript-ը հիմնականում օգտագործվում է", en:"Which language powers interactive behavior in browsers?", ru:"Какой язык управляет интерактивностью в браузерах?"}, choices:[{hy:"Python",en:"Python",ru:"Python"},{hy:"JavaScript",en:"JavaScript",ru:"JavaScript"},{hy:"C#",en:"C#",ru:"C#"},{hy:"SQL",en:"SQL",ru:"SQL"}], answer:1 }
+  ]},
+
+  // Level 3 — mixed
+  { questions: [
+    { text:{hy:"Ո՞րն է մայրաքաղաքը Ֆրանսիայի", en:"What is the capital of France?", ru:"Какой столица Франции?"}, choices:[{hy:"Բեռլին",en:"Berlin",ru:"Берлин"},{hy:"Մադրիդ",en:"Madrid",ru:"Мадрид"},{hy:"Փարիզ",en:"Paris",ru:"Париж"},{hy:"Ռոմա",en:"Rome",ru:"Рим"}], answer:2 },
+    { text:{hy:"Մաթեմատիկա: 12 + 15 =", en:"12 + 15 =", ru:"12 + 15 ="}, choices:[{hy:"26",en:"26",ru:"26"},{hy:"27",en:"27",ru:"27"},{hy:"25",en:"25",ru:"25"},{hy:"28",en:"28",ru:"28"}], answer:1 },
+    { text:{hy:"Տրամաբանական: Եթե հաջորդաբար բազմապատկում ենք 2×2×2, արդյունքը ի՞նչ կլինի", en:"Logic: 2×2×2 = ?", ru:"Логика: 2×2×2 = ?"}, choices:[{hy:"6",en:"6",ru:"6"},{hy:"8",en:"8",ru:"8"},{hy:"4",en:"4",ru:"4"},{hy:"16",en:"16",ru:"16"}], answer:1 },
+    { text:{hy:"Ինչ խնդիր է լուծում GPS-ը", en:"What does GPS provide?", ru:"Для чего нужен GPS?"}, choices:[{hy:"Տեղադրություն",en:"Location",ru:"Местоположение"},{hy:"Ինտերնետ",en:"Internet",ru:"Интернет"},{hy:"Զանգեր",en:"Calls",ru:"Звонки"},{hy:"Օդերևութաբանական տվյալներ",en:"Weather",ru:"Погода"}], answer:0 },
+    { text:{hy:"Գիտություն: Արևը աստղ է՞ թե մոլորակ", en:"Science: Is the Sun a star or planet?", ru:"Наука: Солнце — это звезда или планета?"}, choices:[{hy:"Մոլորակ",en:"Planet",ru:"Планета"},{hy:"Աստղ",en:"Star",ru:"Звезда"},{hy:"Պակաս կարևոր",en:"Comet",ru:"Комета"},{hy:"Մակերես",en:"Satellite",ru:"Спутник"}], answer:1 }
+  ]},
+
+  // Level 4 — mixed
+  { questions: [
+    { text:{hy:"Մաթեմ: 7 × 7 =", en:"7 × 7 =", ru:"7 × 7 ="}, choices:[{hy:"42",en:"42",ru:"42"},{hy:"48",en:"48",ru:"48"},{hy:"49",en:"49",ru:"49"},{hy:"56",en:"56",ru:"56"}], answer:2 },
+    { text:{hy:"Տեխնոլոգիա: HTML, CSS, և __ են հիմնական web-տեխնոլոգիաները", en:"HTML, CSS, and __ are the main web technologies", ru:"HTML, CSS и __ — основные веб-технологии"}, choices:[{hy:"Python",en:"Python",ru:"Python"},{hy:"JavaScript",en:"JavaScript",ru:"JavaScript"},{hy:"C++",en:"C++",ru:"C++"},{hy:"Java",en:"Java",ru:"Java"}], answer:1 },
+    { text:{hy:"Պատմություն: Ո՞վ էր Մեծն Նապոլեոնի հակառակորդը 1812-ին (երկիր)", en:"History: Napoleon invaded which country in 1812?", ru:"История: Куда напал Наполеон в 1812 году?"}, choices:[{hy:"Անգլիա",en:"England",ru:"Англия"},{hy:"Ռուսաստան",en:"Russia",ru:"Россия"},{hy:"Նիդեռլանդներ",en:"Netherlands",ru:"Нидерланды"},{hy:"Իտալիա",en:"Italy",ru:"Италия"}], answer:1 },
+    { text:{hy:"Գեոգրաֆիա: Ո՞րն է աշխարհի ամենաբարձր լեռը", en:"Which is the world's highest mountain?", ru:"Какая самая высокая гора в мире?"}, choices:[{hy:"Կիլիմանջարեն",en:"Kilimanjaro",ru:"Килиманджаро"},{hy:"Էվերես",en:"Everest",ru:"Эверест"},{hy:"Կ2",en:"K2",ru:"К2"},{hy:"Մոնբլան",en:"Mont Blanc",ru:"Монблан"}], answer:1 },
+    { text:{hy:"Տրամաբանական: Ո՞ր թիվն է հաջորդում հաջորդականությանը: 1,2,4,8,?", en:"Pattern: 1,2,4,8, ? ", ru:"Последовательность: 1,2,4,8, ?"}, choices:[{hy:"10",en:"10",ru:"10"},{hy:"12",en:"12",ru:"12"},{hy:"16",en:"16",ru:"16"},{hy:"18",en:"18",ru:"18"}], answer:2 }
+  ]},
+
+  // Level 5 — easier
+  { questions: [
+    { text:{hy:"Քանի ոտք ունի գորտը՞", en:"How many legs does a frog have?", ru:"Сколько ног у лягушки?"}, choices:[{hy:"2",en:"2",ru:"2"},{hy:"4",en:"4",ru:"4"},{hy:"6",en:"6",ru:"6"},{hy:"8",en:"8",ru:"8"}], answer:1 },
+    { text:{hy:"Ինչ է արևածաղկի գույնը?", en:"What color is a sunflower?", ru:"Какого цвета подсолнух?"}, choices:[{hy:"Կապույտ",en:"Blue",ru:"Синий"},{hy:"Դեղին",en:"Yellow",ru:"Жёлтый"},{hy:"Կարմիր",en:"Red",ru:"Красный"},{hy:"Սպիտակ",en:"White",ru:"Белый"}], answer:1 },
+    { text:{hy:"9 - 3 =", en:"9 - 3 =", ru:"9 - 3 ="}, choices:[{hy:"5",en:"5",ru:"5"},{hy:"6",en:"6",ru:"6"},{hy:"7",en:"7",ru:"7"},{hy:"8",en:"8",ru:"8"}], answer:1 },
+    { text:{hy:"Ո՞ր կենդանին է թռչում և հաճախ կապվում է բջջային ուղեկցությամբ (bird that often perches on wires)?", en:"Which animal often perches on wires?", ru:"Какое животное часто садится на провода?"}, choices:[{hy:"Կատու",en:"Cat",ru:"Кошка"},{hy:"Թռչուն",en:"Bird",ru:"Птица"},{hy:"Արջ",en:"Bear",ru:"Медведь"},{hy:"Խեցգետին",en:"Crab",ru:"Краб"}], answer:1 },
+    { text:{hy:"Ինչից են վարդերը հիմնականում հոտավետ?", en:"What makes roses smell nice?", ru:"Что делает розы ароматными?"}, choices:[{hy:"Ջուր",en:"Water",ru:"Вода"},{hy:"Ծաղկափոշի",en:"Pollen",ru:"Пыльца"},{hy:"Զուգորդիչ էրոմատներ (essential oils)",en:"Essential oils",ru:"Эфирные масла"},{hy:"Ծաղկի գույնը",en:"Color",ru:"Цвет"}], answer:2 }
+  ]},
+
+  // Level 6 — easier
+  { questions: [
+    { text:{hy:"Ո՞ր ամիսն է հաջորդում հունիսին?", en:"Which month comes after June?", ru:"Какой месяц идёт после июня?"}, choices:[{hy:"Մայիս",en:"May",ru:"Май"},{hy:"Հուլիս",en:"July",ru:"Июль"},{hy:"Ապրիլ",en:"April",ru:"Апрель"},{hy:"Սեպտեմբեր",en:"September",ru:"Сентябрь"}], answer:1 },
+    { text:{hy:"Աղբյուրներ. ամպից իջնող ջուրը կոչվում է՞", en:"What is rain?", ru:"Как называется вода, падающая из облаков?"}, choices:[{hy:"Ցնցուղ",en:"Shower",ru:"Ливень"},{hy:"Ջուր",en:"Water",ru:"Вода"},{hy:"Ցամաք",en:"Land",ru:"Суша"},{hy:"Քամի",en:"Wind",ru:"Ветер"}], answer:0 },
+    { text:{hy:"Մաթեմ: 3 × 3 =", en:"3 × 3 =", ru:"3 × 3 ="}, choices:[{hy:"6",en:"6",ru:"6"},{hy:"9",en:"9",ru:"9"},{hy:"12",en:"12",ru:"12"},{hy:"3",en:"3",ru:"3"}], answer:1 },
+    { text:{hy:"Երաժշտություն. վոկալ բառը նշանակում է՝", en:"Vocal means:", ru:"Что означает 'vocal'?"}, choices:[{hy:"Սխալ ասել",en:"To lie",ru:"Лгать"},{hy:"Տրամադրություն",en:"Mood",ru:"Настроение"},{hy:"Հնչյունային, ձայնային",en:"Sound/voice",ru:"Звук/голос"},{hy:"Դաշնամուր",en:"Piano",ru:"Пианино"}], answer:2 },
+    { text:{hy:"Ո՞րը է ազոտի տեսականի առօրյա կյանքում (air composition)", en:"Which gas is most abundant in air?", ru:"Какой газ наиболее распространён в воздухе?"}, choices:[{hy:"Թթվածին",en:"Oxygen",ru:"Кислород"},{hy:"Ազոտ",en:"Nitrogen",ru:"Азот"},{hy:"Ինert gas",en:"Argon",ru:"Аргон"},{hy:"Հետեւորդ",en:"CO2",ru:"CO2"}], answer:1 }
+  ]},
+
+  // Level 7 — mixed slightly harder
+  { questions: [
+    { text:{hy:"Մաթեմ: 15 + 27 =", en:"15 + 27 =", ru:"15 + 27 ="}, choices:[{hy:"32",en:"32",ru:"32"},{hy:"42",en:"42",ru:"42"},{hy:"52",en:"52",ru:"52"},{hy:"40",en:"40",ru:"40"}], answer:1 },
+    { text:{hy:"Գիտական. Երկրագնդի շուրջը շրջվում է՝", en:"What does the Earth orbit around?", ru:"Вокруг чего обращается Земля?"}, choices:[{hy:"Արև",en:"Sun",ru:"Солнце"},{hy:"Աղավնի",en:"Moon",ru:"Луна"},{hy:"Յուպիտեր",en:"Jupiter",ru:"Юпитер"},{hy:"Մարս",en:"Mars",ru:"Марс"}], answer:0 },
+    { text:{hy:"Տրամաբանություն. Որ լոգիկական operator-ը նշանակում է «և»", en:"Which logical operator means 'and'?", ru:"Какой логический оператор означает 'и'?"}, choices:[{hy:"OR",en:"OR",ru:"OR"},{hy:"AND",en:"AND",ru:"AND"},{hy:"NOT",en:"NOT",ru:"NOT"},{hy:"XOR",en:"XOR",ru:"XOR"}], answer:1 },
+    { text:{hy:"Պատմություն. Երկրորդ համաշխարհային պատերազմը ավարտվեց որ տարի?", en:"History: In which year WWII ended?", ru:"История: В каком году закончилась Вторая мировая война?"}, choices:[{hy:"1940",en:"1940",ru:"1940"},{hy:"1945",en:"1945",ru:"1945"},{hy:"1950",en:"1950",ru:"1950"},{hy:"1939",en:"1939",ru:"1939"}], answer:1 },
+    { text:{hy:"IT. CSS-ում որ հատկությունը կարգավորում է տեքստի գույնը", en:"Which CSS property sets text color?", ru:"Какое CSS-свойство задаёт цвет текста?"}, choices:[{hy:"background-color",en:"background-color",ru:"background-color"},{hy:"font-size",en:"font-size",ru:"font-size"},{hy:"color",en:"color",ru:"color"},{hy:"border-color",en:"border-color",ru:"border-color"}], answer:2 }
+  ]},
+
+  // Level 8 — mixed easy
+  { questions: [
+    { text:{hy:"Չ՞է, թե՞. 0 բազմապատկել ցանկացած թվով հավասար է 0-ին:", en:"True or False: 0 times any number equals 0.", ru:"Верно или нет: 0 умножить на любое число равно 0."}, choices:[{hy:"True",en:"True",ru:"True"},{hy:"False",en:"False",ru:"False"},{hy:"Պետք է ստուգել",en:"Need to check",ru:"Нужно проверить"},{hy:"Չգիտեմ",en:"Don't know",ru:"Не знаю"}], answer:0 },
+    { text:{hy:"Առօրյա. Ո՞րն է աղամանի գլխավոր բաղադրիչը", en:"Everyday: What is the main ingredient in salt?", ru:"Что является главным компонентом соли?"}, choices:[{hy:"Sodium chloride (NaCl)",en:"Sodium chloride (NaCl)",ru:"Хлорид натрия (NaCl)"},{hy:"Sugar",en:"Sugar",ru:"Сахар"},{hy:"Vinegar",en:"Vinegar",ru:"Уксус"},{hy:"Water",en:"Water",ru:"Вода"}], answer:0 },
+    { text:{hy:"Մաթեմ: 20 - 7 =", en:"20 - 7 =", ru:"20 - 7 ="}, choices:[{hy:"13",en:"13",ru:"13"},{hy:"14",en:"14",ru:"14"},{hy:"12",en:"12",ru:"12"},{hy:"11",en:"11",ru:"11"}], answer:0 },
+    { text:{hy:"Բնություն. Շերտ, որը մենք շնչում ենք՝ կոչվում է՞", en:"Nature: The layer we breathe is called?", ru:"Как называется слой, которым мы дышим?"}, choices:[{hy:"Մանտիա",en:"Mantle",ru:"Мантия"},{hy:"Ատմոսֆերա",en:"Atmosphere",ru:"Атмосфера"},{hy:"Սեյսմիկ շերտ",en:"Seismic layer",ru:"Сейсмический слой"},{hy:"Կորտեքս",en:"Cortex",ru:"Кортекс"}], answer:1 },
+    { text:{hy:"Տրամաբանական. Ո՞րն է հաջորդ թիվը՝ 10, 20, 30, ?", en:"Logic: Next number: 10,20,30, ?", ru:"Следующее число: 10,20,30, ?"}, choices:[{hy:"40",en:"40",ru:"40"},{hy:"35",en:"35",ru:"35"},{hy:"50",en:"50",ru:"50"},{hy:"45",en:"45",ru:"45"}], answer:0 }
+  ]}
+];
+
+let gameName = "QuizMaster";
+/* State */
+let currentLang = 'hy';
+let currentLevel = 1;    // 1-based index of level in levels[]
+let questionIndex = 0;   // 0-based within current level
+let score = 0;
+
+/* DOM */
+const settingsBtn = document.getElementById('settingsBtn');
+const settingsPanel = document.getElementById('settingsPanel');
+const homeBtn = document.getElementById('homeBtn');
+const langButtons = Array.from(document.querySelectorAll('#settingsPanel .lang-btn[data-lang]'));
+const startBtn = document.getElementById('startBtn');
+const shareBtn = document.getElementById('shareBtn');
+const questionText = document.getElementById('questionText');
+const choicesContainer = document.getElementById('choicesContainer');
+const levelDisplay = document.getElementById('levelDisplay');
+const scoreDisplay = document.getElementById('scoreDisplay');
+const messageDiv = document.getElementById('message');
+
+/* localStorage keys */
+const LS_LEVEL = 'edu_quiz_level';
+const LS_QINDEX = 'edu_quiz_qindex';
+const LS_SCORE = 'edu_quiz_score';
+const LS_LANG = 'edu_quiz_lang';
+
+/* Init */
+function init(){
+  // load saved language
+  const savedLang = localStorage.getItem(LS_LANG);
+  if(savedLang) currentLang = savedLang;
+  loadProgress();
+  renderUI();
+  bindUI();
+  showIdle();
+  updateLangButtons();
+}
+
+/* UI rendering */
+function renderUI(){
+  levelDisplay.textContent = `${texts[currentLang].level}: ${currentLevel}`;
+  scoreDisplay.textContent = `${texts[currentLang].score}: ${score}`;
+  startBtn.textContent = 'Start Game'; // requested single label
+  shareBtn.textContent = (currentLang==='hy') ? 'Կիսվել' : (currentLang==='ru' ? 'Поделиться' : 'Share');
+  homeBtn.textContent = (currentLang==='hy') ? 'Home' : (currentLang==='ru' ? 'На главную' : 'Home');
+}
+
+/* update language buttons active state */
+function updateLangButtons(){
+  document.querySelectorAll('#settingsPanel .lang-btn').forEach(b=>{
+    const lang = b.getAttribute('data-lang');
+    if(lang === currentLang) b.classList.add('active'); else b.classList.remove('active');
+  });
+}
+
+/* bind events */
+function bindUI(){
+  settingsBtn.addEventListener('click', toggleSettings);
+  homeBtn.addEventListener('click', ()=>{ location.reload(); });
+  document.querySelectorAll('#settingsPanel .lang-btn').forEach(b=>{
+    b.addEventListener('click', ()=>{
+      const lang = b.getAttribute('data-lang');
+      currentLang = lang;
+      localStorage.setItem(LS_LANG, currentLang);
+      renderUI();
+      updateLangButtons();
+      if(hasActiveQuestion()) showQuestion();
+    });
+  });
+
+  startBtn.addEventListener('click', ()=> {
+    loadProgress();
+    renderUI();
+    showQuestion();
+    shareBtn.classList.add('hidden');
+    messageDiv.textContent = '';
+  });
+
+  shareBtn.addEventListener('click', ()=> {
+    const txt = `${gameName} — Level ${currentLevel} completed with ${score} points!`;
+    const txt = texts[currentLang].shareText.replace('{L}', currentLevel).replace('{S}', score);
+    const url = `https://twitter.com/intent/tweet?text=${encodeURIComponent(txt)}`;
+    window.open(url, '_blank');
+  });
+}
+
+/* settings panel */
+function toggleSettings(){
+  const open = settingsPanel.style.display === 'flex';
+  settingsPanel.style.display = open ? 'none' : 'flex';
+  settingsBtn.setAttribute('aria-expanded', String(!open));
+  settingsPanel.setAttribute('aria-hidden', String(open));
+}
+
+/* helpers */
+function hasActiveQuestion(){
+  return questionText.textContent && questionText.textContent.trim().length>0;
+}
+function showIdle(){
+  questionText.textContent = ''; choicesContainer.innerHTML = ''; messageDiv.textContent = '';
+}
+
+/* main: show question */
+function showQuestion(){
+  const lvl = levels[currentLevel-1];
+  if(!lvl){ finishGame(); return; }
+  const q = lvl.questions[questionIndex];
+  if(!q){ finishGame(); return; }
+  questionText.textContent = q.text[currentLang];
+  choicesContainer.innerHTML = '';
+  q.choices.forEach((c, idx)=>{
+    const btn = document.createElement('button');
+    btn.className = 'choice-btn';
+    btn.type = 'button';
+    btn.textContent = c[currentLang];
+    btn.addEventListener('click', ()=> onChoice(idx));
+    choicesContainer.appendChild(btn);
+  });
+  levelDisplay.textContent = `${texts[currentLang].level}: ${currentLevel}`;
+  scoreDisplay.textContent = `${texts[currentLang].score}: ${score}`;
+  messageDiv.textContent = '';
+}
+
+/* when player selects */
+function onChoice(selectedIdx){
+  const lvl = levels[currentLevel-1];
+  const q = lvl.questions[questionIndex];
+  if(!q) return;
+  if(selectedIdx === q.answer){
+    score++;
+    messageDiv.textContent = texts[currentLang].correct;
+  } else {
+    messageDiv.textContent = texts[currentLang].wrong;
+  }
+  questionIndex++;
+  saveProgress();
+
+  // end of level?
+  if(questionIndex >= lvl.questions.length){
+    const lastLevel = currentLevel === levels.length;
+    if(!lastLevel){
+      // level complete — advance
+      messageDiv.textContent = texts[currentLang].congratsLevel + ` (${texts[currentLang].level} ${currentLevel})`;
+      currentLevel++;
+      questionIndex = 0;
+      shareBtn.classList.remove('hidden');
+      saveProgress();
+      renderUI();
+      // show next question shortly so user reads message
+      setTimeout(()=>{ showQuestion(); shareBtn.classList.add('hidden'); }, 900);
+    } else {
+      // game finished
+      messageDiv.textContent = `${texts[currentLang].congratsDone} ${texts[currentLang].score}: ${score}`;
+      shareBtn.classList.remove('hidden');
+      saveProgress();
+      renderUI();
+    }
+  } else {
+    // continue same level
+    renderUI();
+    showQuestion();
+  }
+}
+
+/* persistence */
+function saveProgress(){
+  localStorage.setItem(LS_LEVEL, currentLevel);
+  localStorage.setItem(LS_QINDEX, questionIndex);
+  localStorage.setItem(LS_SCORE, score);
+}
+function loadProgress(){
+  currentLevel = parseInt(localStorage.getItem(LS_LEVEL) || '1', 10);
+  questionIndex = parseInt(localStorage.getItem(LS_QINDEX) || '0', 10);
+  score = parseInt(localStorage.getItem(LS_SCORE) || '0', 10);
+}
+
+/* finish */
+function finishGame(){
+  messageDiv.textContent = `${gameName} — ${texts[currentLang].congratsDone} ${texts[currentLang].score}: ${score}`;
+  questionText.textContent = texts[currentLang].congratsDone;
+  choicesContainer.innerHTML = '';
+  shareBtn.classList.remove('hidden');
+}
+
+/* start app */
+init();
+</script>
+</body>
+</html> 
